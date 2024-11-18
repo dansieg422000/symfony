@@ -3,6 +3,16 @@
 {% block title %} Symfony Tutorial {% endblock %}
 
 {% block body %}
-    <strong>Test Data: {{ testData }}</strong>
+    <strong>Gloss Feature</strong>
+    <ul>
+        {% for gloss in features  %}
+            <li>
+                <a href="{{ path('app_glossdetail_show', {id: gloss.id}) }}">
+                    {{ gloss.id }}
+                    {{ gloss.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
 
