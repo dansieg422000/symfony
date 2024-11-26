@@ -19,8 +19,15 @@
 3. Run Symfony project
    ```bash
    ~/Desktop$ cd symfony
-   ~/Desktop/symfony$ symfony serve
+   ~/Desktop/symfony$ symfony serve start -d
+   ~/Desktop/symfony$ symfony serve stop -d
+   
+
 
 4. To run phpstorm
    ```bash
    ~/Desktop$ phpstorm
+   
+5. To run xampp
+   ```bash
+   ~/Desktop$ sudo /opt/lampp/manager-linux-x64.run
