@@ -7,8 +7,30 @@
 - Symfony CLI
 - MySQL or another Database
 
+## Clone the project
 
-## Installation
+1. Clone the Project
+   ```bash
+   git clone dansieg422000/symfony
+
+## Installation - Windows
+
+1. Make sure all requirements installed
+   ```bash
+   - PHP
+   - MySql
+   - Apache Webserver
+   - Symfony (CLI)
+
+2. Run composer install in the project directory
+   ```bash
+   PS C:\Users\ronal\Development\symfony> composer install
+   
+3. Start the Server
+   ```bash
+   PS C:\Users\ronal\Development\symfony>symfony server:start
+   
+## Installation - Linux
 
 1. Refer to Symfony website
 
@@ -22,8 +44,6 @@
    ~/Desktop/symfony$ symfony serve start -d
    ~/Desktop/symfony$ symfony serve stop -d
    
-
-
 4. To run phpstorm
    ```bash
    ~/Desktop$ phpstorm
