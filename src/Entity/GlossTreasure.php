@@ -3,11 +3,31 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\GlossTreasureRepository;
+use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GlossTreasureRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    shortName: 'Treasure',
+    description: 'Gloss treasure',
+    operations: [
+//        new Get(uriTemplate: '/gloss-treasure/{treasureId}'),
+//        new GetCollection(uriTemplate: 'gloss-treasure'),
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Patch(),
+        new Delete()
+    ]
+)]
 class GlossTreasure
 {
     #[ORM\Id]
@@ -22,13 +42,18 @@ class GlossTreasure
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?int $value = null;
+    private ?int $glossValue = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column]
     private ?bool $isPublished = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -59,14 +84,14 @@ class GlossTreasure
         return $this;
     }
 
-    public function getValue(): ?int
+    public function getGlossValue(): ?int
     {
-        return $this->value;
+        return $this->glossValue;
     }
 
-    public function setValue(int $value): static
+    public function setGlossValue(int $glossValue): static
     {
-        $this->value = $value;
+        $this->glossValue = $glossValue;
 
         return $this;
     }
@@ -76,11 +101,12 @@ class GlossTreasure
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    /**
+     * A human-readable Date for CreatedAt property.
+     */
+    public function getCreatedAtAgo(): string
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
+        return Carbon::instance($this->createdAt)->diffForHumans();
     }
 
     public function isPublished(): ?bool
