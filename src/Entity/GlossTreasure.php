@@ -12,6 +12,8 @@ use ApiPlatform\Metadata\Put;
 use App\Repository\GlossTreasureRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 #[ORM\Entity(repositoryClass: GlossTreasureRepository::class)]
 #[ApiResource(
@@ -26,7 +28,10 @@ use Doctrine\ORM\Mapping as ORM;
         new Put(),
         new Patch(),
         new Delete()
-    ]
+    ],
+    normalizationContext: ['groups' => ['glossTreasure:read']],
+    denormalizationContext: ['groups' => ['glossTreasure:write']],
+    paginationItemsPerPage: 5
 )]
 class GlossTreasure
 {
@@ -36,18 +41,24 @@ class GlossTreasure
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?int $glossValue = null;
+    #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    private int $glossValue = 0;
 
     #[ORM\Column]
+    #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    #[SerializedName('createdDate')]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column]
+    #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
     private ?bool $isPublished = null;
 
     public function __construct()
@@ -84,14 +95,23 @@ class GlossTreasure
         return $this;
     }
 
+    #[Groups(['glossTreasure:read'])]
     public function getGlossValue(): ?int
     {
         return $this->glossValue;
     }
 
+    #[Groups('glossTreasure:write')]
     public function setGlossValue(int $glossValue): static
     {
         $this->glossValue = $glossValue;
+
+        return $this;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -104,6 +124,7 @@ class GlossTreasure
     /**
      * A human-readable Date for CreatedAt property.
      */
+    #[Groups(['glossTreasure:read'])]
     public function getCreatedAtAgo(): string
     {
         return Carbon::instance($this->createdAt)->diffForHumans();
@@ -114,7 +135,8 @@ class GlossTreasure
         return $this->isPublished;
     }
 
-    public function setPublished(bool $isPublished): static
+    #[Groups('glossTreasure:write')]
+    public function setIsPublished(bool $isPublished): static
     {
         $this->isPublished = $isPublished;
 
