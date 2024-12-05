@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -9,11 +13,13 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Serializer\Filter\PropertyFilter;
 use App\Repository\GlossTreasureRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
+use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: GlossTreasureRepository::class)]
 #[ApiResource(
@@ -29,10 +35,12 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
         new Patch(),
         new Delete()
     ],
+    formats: ['json', 'jsonld', 'html', 'csv' => 'text/csv'],
     normalizationContext: ['groups' => ['glossTreasure:read']],
     denormalizationContext: ['groups' => ['glossTreasure:write']],
     paginationItemsPerPage: 5
 )]
+#[ApiFilter(PropertyFilter::class)]
 class GlossTreasure
 {
     #[ORM\Id]
@@ -42,14 +50,17 @@ class GlossTreasure
 
     #[ORM\Column(length: 255)]
     #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    #[ApiFilter(RangeFilter::class)]
     private int $glossValue = 0;
 
     #[ORM\Column]
@@ -59,6 +70,7 @@ class GlossTreasure
 
     #[ORM\Column]
     #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    #[ApiFilter(BooleanFilter::class)]
     private ?bool $isPublished = null;
 
     public function __construct()
@@ -71,6 +83,7 @@ class GlossTreasure
         return $this->id;
     }
 
+    #[Groups(['glossTreasure:read'])]
     public function getName(): ?string
     {
         return $this->name;
@@ -83,9 +96,16 @@ class GlossTreasure
         return $this;
     }
 
+    #[Groups(['glossTreasure:read'])]
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    #[Groups(['glossTreasure:read'])]
+    public function getShortDescription(): ?string
+    {
+        return u($this->description)->truncate(40, '...');
     }
 
     public function setDescription(string $description): static

@@ -26,6 +26,10 @@
    ```bash
    PS C:\Users\ronal\Development\symfony> composer install
    
+3. To fun bin\console
+   ```bash
+   PS C:\Users\ronal\Development\symfony> php .\bin\console debug:config api_platform
+   
 3. Start the Server
    ```bash
    PS C:\Users\ronal\Development\symfony>symfony server:start
