@@ -19,6 +19,7 @@ use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
 use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: GlossTreasureRepository::class)]
@@ -51,6 +52,8 @@ class GlossTreasure
     #[ORM\Column(length: 255)]
     #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
     #[ApiFilter(SearchFilter::class, strategy: 'partial')]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 1, max: 255, maxMessage: 'Name is required at least 2 characters')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
@@ -61,6 +64,7 @@ class GlossTreasure
     #[ORM\Column]
     #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
     #[ApiFilter(RangeFilter::class)]
+    #[Assert\GreaterThanOrEqual(0)]
     private int $glossValue = 0;
 
     #[ORM\Column]
