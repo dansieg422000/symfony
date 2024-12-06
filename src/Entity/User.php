@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -49,10 +51,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:read', 'user:write', 'glossTreasure:read'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 8, max: 20)]
     private ?string $username = null;
+
+    /**
+     * @var Collection<int, GlossTreasure>
+     */
+    #[ORM\OneToMany(targetEntity: GlossTreasure::class, mappedBy: 'owner')]
+    #[Groups(['user:read'])]
+    private Collection $glossTreasures;
+
+    public function __construct()
+    {
+        $this->glossTreasures = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -137,6 +151,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GlossTreasure>
+     */
+    public function getGlossTreasures(): Collection
+    {
+        return $this->glossTreasures;
+    }
+
+    public function addGlossTreasure(GlossTreasure $glossTreasure): static
+    {
+        if (!$this->glossTreasures->contains($glossTreasure)) {
+            $this->glossTreasures->add($glossTreasure);
+            $glossTreasure->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGlossTreasure(GlossTreasure $glossTreasure): static
+    {
+        if ($this->glossTreasures->removeElement($glossTreasure)) {
+            // set the owning side to null (unless already changed)
+            if ($glossTreasure->getOwner() === $this) {
+                $glossTreasure->setOwner(null);
+            }
+        }
 
         return $this;
     }

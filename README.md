@@ -81,6 +81,16 @@
    ```bash
    PS C:\Users\ronal\Development\symfony> symfony console doctrine:fixtures:load
    
+7. To DROP Database
+   ```bash
+   PS C:\Users\ronal\Development\symfony> symfony console doctrine:database:drop --force
+   
+8. To CREATE a Database
+   ```bash
+   PS C:\Users\ronal\Development\symfony> symfony console doctrine:database:create
+   
+
+   
    
    
    

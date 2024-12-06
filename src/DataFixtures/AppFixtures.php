@@ -11,7 +11,11 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        GlossTreasureFactory::createMany(50);
         UserFactory::createMany(10);
+        GlossTreasureFactory::createMany(50, function () {
+            return [
+                'owner' => UserFactory::random(),
+            ];
+        });
     }
 }

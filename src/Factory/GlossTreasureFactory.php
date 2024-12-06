@@ -37,6 +37,7 @@ final class GlossTreasureFactory extends PersistentProxyObjectFactory
             'glossValue' => self::faker()->randomNumber(),
             'isPublished' => self::faker()->boolean(),
             'name' => self::faker()->text(255),
+            'owner' => UserFactory::new(),
         ];
     }
 

@@ -50,19 +50,19 @@ class GlossTreasure
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    #[Groups(['glossTreasure:read', 'glossTreasure:write', 'user:read'])]
     #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     #[Assert\NotBlank]
     #[Assert\Length(min: 1, max: 255, maxMessage: 'Name is required at least 2 characters')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    #[Groups(['glossTreasure:read', 'glossTreasure:write', 'user:read'])]
     #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
+    #[Groups(['glossTreasure:read', 'glossTreasure:write', 'user:read'])]
     #[ApiFilter(RangeFilter::class)]
     #[Assert\GreaterThanOrEqual(0)]
     private int $glossValue = 0;
@@ -76,6 +76,11 @@ class GlossTreasure
     #[Groups(['glossTreasure:read', 'glossTreasure:write'])]
     #[ApiFilter(BooleanFilter::class)]
     private ?bool $isPublished = null;
+
+    #[ORM\ManyToOne(inversedBy: 'glossTreasures')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['glossTreasure:read'])]
+    private ?User $owner = null;
 
     public function __construct()
     {
@@ -163,6 +168,18 @@ class GlossTreasure
     public function setIsPublished(bool $isPublished): static
     {
         $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }
